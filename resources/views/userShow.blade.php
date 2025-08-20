@@ -1,32 +1,47 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-2xl text-gray-900 dark:text-gray-100 leading-tight">
             {{ __('Profile') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl" style="color: white">
-                    Name:
-                    <h1 style="color: white">{{ $user->name }}</h1>
-                    Email:
-                    <p style="color: white">{{ $user->email }}</p>
-                </div>
-                <a href="{{ route('user.edit', $user->id) }}"
-                    class=  "cursor-pointer px-3 py-2 text-xs font-medium text-white bg-blue-700
-                        rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  ">
-                    Edit
-                </a>
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="p-8 bg-white dark:bg-gray-800 shadow-xl rounded-2xl">
 
-                <form method="post" style="display: inline;" action="{{ route('user.delete', $user->id) }}"
-                    class=  "cursor-pointer px-3 py-2 text-xs font-medium text-white bg-red-700
-                rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300  ">
-                    @csrf
-                    @method('Delete')
-                    <button type="submit">Delete</button>
+                <!-- Profile Info -->
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Name</h3>
+                        <p class="text-gray-700 dark:text-gray-300 text-lg">{{ $user->name }}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Email</h3>
+                        <p class="text-gray-700 dark:text-gray-300 text-lg">{{ $user->email }}</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 flex space-x-4">
+                    <a href="{{ route('user.edit', $user->id) }}"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 
+                               rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 
+                               focus:ring-offset-2 focus:ring-blue-400 transition ease-in-out duration-150">
+                        Edit
                     </a>
+
+                    <form method="POST" action="{{ route('user.delete', $user->id) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 
+                                   rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 
+                                   focus:ring-offset-2 focus:ring-red-400 transition ease-in-out duration-150">
+                            Delete
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
