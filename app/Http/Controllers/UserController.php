@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -10,34 +9,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\View\View;
-
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    // List all users
     public function index()
     {
-        $users = User::all();
+        $users = User::with('roles')->get(); // eager load roles
         return view("userIndex", ['users' => $users]);
     }
 
+    // Show create form
     public function create()
     {
-        return view('userCreate');
+        $roles = Role::all();
+        return view('userCreate', compact('roles'));
     }
 
-    public function show($id)
-    {
-        $user = User::findOrFail($id);
-        return view('userShow', ['user' => $user]);
-    }
-
+    // Store new user
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'roles' => ['required', 'exists:roles,name'], // validate selected role
         ]);
 
         $user = User::create([
@@ -46,40 +43,67 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Assign role to user
+        // $user->assignRole($request->roles); // Add new one do not replpaces old roles with the new ones
+        $user->syncRoles($request->roles); // Replaces old roles with the new ones
+
         event(new Registered($user));
 
-        Auth::login($user);
+        // Optional: log in new user
+        // Auth::login($user);
 
-        return redirect(route('user.index', absolute: false));
+        return redirect(route('user.index'));
     }
 
+    // Show single user
+    public function show($id)
+    {
+        $user = User::with('roles')->findOrFail($id);
+        return view('userShow', ['user' => $user]);
+    }
+
+    // Show edit form
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('editUser', ['user' => $user]);
-    }
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        if ($request->password) {
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-        } else {
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email
-            ]);
-        }
-        return redirect(route('user.index', absolute: false));
+        $roles = Role::all();
+        return view('editUser', compact('user', 'roles'));
     }
 
+    // Update user
+    public function update(Request $request, $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'roles' => ['required', 'exists:roles,name'],
+        ]);
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+        ];
+
+        if ($request->password) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        // Sync the new role
+        $user->syncRoles([$request->roles]);
+
+        return redirect(route('user.index'));
+    }
+
+    // Delete user
     public function delete($id): RedirectResponse
     {
         $user = User::findOrFail($id);
         $user->delete();
-        return redirect(route('user.index', absolute: false));
+        return redirect(route('user.index'));
     }
 }
