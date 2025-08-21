@@ -53,6 +53,36 @@
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
 
+                    <!-- Role -->
+                    <div class="">
+                        <x-input-label for="role" :value="__('Role')" />
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            @foreach ($roles as $role)
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" name="roles[]" value="{{ $role->name }}"
+                                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                        {{ $user->roles->contains('name', $role->name) ? 'checked' : '' }}>
+                                    <span class="text-gray-700 dark:text-gray-300">{{ $role->name }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- <div>
+                        <x-input-label for="role" :value="__('Role')" />
+                        <select id="role" name="role"
+                            class="block mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600
+                            dark:bg-gray-700 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500">
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->name }}"
+                                    {{ $user->roles->contains('name', $role->name) ? 'selected' : '' }}>
+                                    {{ ucfirst($role->name) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                    </div> --}}
+
                     <!-- Actions -->
                     <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                         <a href="{{ route('user.index') }}"
