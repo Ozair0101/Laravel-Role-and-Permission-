@@ -15,42 +15,42 @@ class PermissionSeeder extends Seeder
     {
         // Create permissions
         $permissions = [
-            'create posts',
-            'edit posts',
-            'delete posts',
-            'view posts',
-            'manage departments',
-            'create departments',
-            'edit departments',
-            'delete departments',
-            'view departments',
+            'role.create',
+            'role.edit',
+            'role.delete',
+            'role.view',
+            'role.manage',
+            'product.create',
+            'product.edit',
+            'product.delete',
+            'product.view',
         ];
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
 
-        // Assign permissions to roles
-        $adminRole = Role::where('name', 'Admin')->first();
-        $editorRole = Role::where('name', 'Editor')->first();
-        $viewerRole = Role::where('name', 'Viewer')->first();
+        // // Assign permissions to roles
+        // $adminRole = Role::where('name', 'Admin')->first();
+        // $editorRole = Role::where('name', 'Editor')->first();
+        // $viewerRole = Role::where('name', 'Viewer')->first();
 
-        // Admin gets all permissions
-        $adminRole->givePermissionTo(Permission::all());
+        // // Admin gets all permissions
+        // $adminRole->givePermissionTo(Permission::all());
 
-        // Editor gets post permissions and view departments
-        $editorRole->givePermissionTo([
-            'create posts',
-            'edit posts',
-            'delete posts',
-            'view posts',
-            'view departments',
-        ]);
+        // // Editor gets post permissions and view departments
+        // $editorRole->givePermissionTo([
+        //     'create posts',
+        //     'edit posts',
+        //     'delete posts',
+        //     'view posts',
+        //     'view departments',
+        // ]);
 
-        // Viewer gets only view permissions
-        $viewerRole->givePermissionTo([
-            'view posts',
-            'view departments',
-        ]);
+        // // Viewer gets only view permissions
+        // $viewerRole->givePermissionTo([
+        //     'view posts',
+        //     'view departments',
+        // ]);
     }
-} 
+}
