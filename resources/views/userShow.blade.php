@@ -24,23 +24,26 @@
 
                 <!-- Action Buttons -->
                 <div class="mt-8 flex space-x-4">
-                    <a href="{{ route('user.edit', $user->id) }}"
-                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 
-                               rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 
-                               focus:ring-offset-2 focus:ring-blue-400 transition ease-in-out duration-150">
-                        Edit
-                    </a>
-
-                    <form method="POST" action="{{ route('user.delete', $user->id) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 
-                                   rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 
-                                   focus:ring-offset-2 focus:ring-red-400 transition ease-in-out duration-150">
-                            Delete
-                        </button>
-                    </form>
+                    @can('role.edit')
+                        <a href="{{ route('user.edit', $user->id) }}"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 
+                        rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 
+                        focus:ring-offset-2 focus:ring-blue-400 transition ease-in-out duration-150">
+                            Edit
+                        </a>
+                    @endcan
+                    @can('role.delete')
+                        <form method="POST" action="{{ route('user.delete', $user->id) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 
+    rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 
+    focus:ring-offset-2 focus:ring-red-400 transition ease-in-out duration-150">
+                                Delete
+                            </button>
+                        </form>
+                    @endcan
                 </div>
             </div>
         </div>
