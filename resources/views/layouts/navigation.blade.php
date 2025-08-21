@@ -15,9 +15,17 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
-                        {{ __('Users') }}
-                    </x-nav-link>
+                    @if (auth()->user()->can('role.view') ||
+                            auth()->user()->can('role.edit') ||
+                            auth()->user()->can('role.create') ||
+                            auth()->user()->can('role.delete'))
+                        <x-nav-link :href="route('user.index')" :active="request()->routeIs('user.index')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
